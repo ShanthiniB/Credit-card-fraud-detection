@@ -1,0 +1,62 @@
+<!-- templates/welcome.html -->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Welcome - Fraud Detection App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f6f7fb;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        max-width: 600px;
+        margin: 60px auto;
+        background: #fff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+      h1 {
+        color: #333;
+        margin-bottom: 20px;
+      }
+      p {
+        color: #555;
+      }
+      ul {
+        text-align: left;
+        margin: 20px auto;
+        display: inline-block;
+      }
+      .btn {
+        display: inline-block;
+        padding: 12px 20px;
+        background: #007bff;
+        color: white;
+        text-decoration: none;
+        border-radius: 6px;
+        margin-top: 20px;
+        transition: background 0.2s ease;
+      }
+      .btn:hover {
+        background: #0056b3;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Welcome to Fraud Detection App</h1>
+      <p>This tool predicts whether a transaction is fraudulent or not.</p>
+      <ul>
+        <li><strong>0</strong> → Fraud</li>
+        <li><strong>1</strong> → Not Fraud</li>
+      </ul>
+      <a href="/input" class="btn">Go to Input Page</a>
+    </div>
+  </body>
+</html>

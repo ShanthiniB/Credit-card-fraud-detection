@@ -1,0 +1,93 @@
+<!-- templates/output.html -->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Prediction Result - Fraud Detection App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f6f7fb;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        max-width: 600px;
+        margin: 60px auto;
+        background: #fff;
+        padding: 30px;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+      }
+      h2 {
+        color: #333;
+        margin-bottom: 20px;
+      }
+      .result {
+        font-size: 22px;
+        font-weight: bold;
+        padding: 15px;
+        border-radius: 8px;
+        margin: 20px 0;
+      }
+      .fraud {
+        color: #fff;
+        background: #dc3545;
+      }
+      .notfraud {
+        color: #fff;
+        background: #28a745;
+      }
+      .error {
+        color: #000;
+        background: #ffc107;
+      }
+      .btn {
+        display: inline-block;
+        padding: 12px 20px;
+        background: #007bff;
+        color: white;
+        text-decoration: none;
+        border-radius: 6px;
+        margin-top: 20px;
+        transition: background 0.2s ease;
+      }
+      .btn:hover {
+        background: #0056b3;
+      }
+      .prediction-value {
+        font-size: 16px;
+        margin-top: 10px;
+        color: #555;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Prediction Result</h2>
+
+      {% if error %}
+        <div class="result error">{{ error }}</div>
+      {% else %}
+        {% if prediction == 0 %}
+          <div class="result fraud">⚠ Fraud Detected</div>
+        {% elif prediction == 1 %}
+          <div class="result notfraud">✅ Not Fraud</div>
+        {% else %}
+          <div class="result">Result Unavailable</div>
+        {% endif %}
+        
+        <!-- Show the raw prediction value -->
+        <div class="prediction-value">
+          Prediction Value: <strong>{{ prediction }}</strong>
+        </div>
+      {% endif %}
+
+      <a href="/input" class="btn">Test Another Transaction</a>
+      <br /><br />
+      <a href="/" class="btn" style="background:#6c757d;">Back to Home</a>
+    </div>
+  </body>
+</html>
