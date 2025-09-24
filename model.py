@@ -4,16 +4,10 @@ import pandas as pd
 import pickle
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.model_selection import train_test_split, GridSearchCV
-from sklearn.metrics import classification_report, accuracy_score
+from sklearn.metrics import accuracy_score, classification_report
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
-from imblearn.over_sampling import SMOTE
 
-try:
-    from xgboost import XGBClassifier
-    has_xgb = True
-except ImportError:
-    has_xgb = False
 
 # === CONFIG ===
 CSV_PATH = r"C:/Users/Shanthini/OneDrive/Desktop/Project 2/credit_card_fraud_dataset.csv"
@@ -39,22 +33,18 @@ def train_and_save():
     feature_columns = list(X.columns)
     print("🔎 Feature columns:", feature_columns)
 
-    # 4. Train-test split
+    # 4. Train-test split (no SMOTE, just raw data)
     x_train, x_test, y_train, y_test = train_test_split(
         X, y, test_size=0.30, random_state=42, stratify=y
     )
 
-    # 5. Balance classes using SMOTE
-    smote = SMOTE(random_state=42)
-    x_train, y_train = smote.fit_resample(x_train, y_train)
-
-    # 6. Scale features
+    # 5. Scale features
     scaler = StandardScaler()
     scaler.fit(x_train)
     x_train_scaled = scaler.transform(x_train)
     x_test_scaled = scaler.transform(x_test)
 
-    # 7. Candidate models + hyperparameter grids
+    # 6. Candidate models with hyperparameters
     param_grids = {
         "LogisticRegression": {
             "model": LogisticRegression(max_iter=1000),
@@ -81,22 +71,11 @@ def train_and_save():
         }
     }
 
-    if has_xgb:
-        param_grids["XGBoost"] = {
-            "model": XGBClassifier(use_label_encoder=False, eval_metric="logloss"),
-            "params": {
-                "n_estimators": [100, 200],
-                "learning_rate": [0.05, 0.1],
-                "max_depth": [3, 5],
-                "subsample": [0.8, 1.0]
-            }
-        }
-
     best_model = None
     best_acc = 0
     best_name = ""
 
-    # 8. Train & evaluate with GridSearchCV
+    # 7. Train & evaluate each model
     for name, cfg in param_grids.items():
         print(f"\n🔍 Tuning {name}...")
         grid = GridSearchCV(
@@ -123,12 +102,14 @@ def train_and_save():
 
     print(f"\n🏆 Best Model: {best_name} with accuracy {best_acc:.4f}")
 
-    # 9. Save artifacts
+    # 8. Save artifacts
     artifacts = {
         "model": best_model,
         "scaler": scaler,
         "encoders": encoders,
         "feature_columns": feature_columns,
+        "best_model_name": best_name,
+        "best_accuracy": best_acc
     }
 
     with open(OUTPUT_PICKLE, "wb") as f:
