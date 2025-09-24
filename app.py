@@ -5,16 +5,19 @@ import numpy as np
 
 app = Flask(__name__)
 
-# === Load artifacts ===
+# === Load artifacts safely ===
 with open("model.pkl", "rb") as f:
     artifacts = pickle.load(f)
 
-model = artifacts["model"]
-scaler = artifacts["scaler"]
-encoders = artifacts["encoders"]
-feature_columns = artifacts["feature_columns"]
+model = artifacts.get("model")
+scaler = artifacts.get("scaler")
+encoders = artifacts.get("encoders")
+feature_columns = artifacts.get("feature_columns")
 
-print(f"✅ Loaded best model: {artifacts['best_model_name']} (Accuracy: {artifacts['best_accuracy']:.4f})")
+# Safely get model info for printing
+best_model_name = artifacts.get("best_model_name", "Unknown Model")
+best_accuracy = artifacts.get("best_accuracy", 0.0)
+print(f"✅ Loaded best model: {best_model_name} (Accuracy: {best_accuracy:.4f})")
 
 
 @app.route("/")
@@ -24,8 +27,8 @@ def home():
 
 @app.route("/input")
 def input_page():
-    locations = encoders["Location"].classes_
-    transaction_types = encoders["TransactionType"].classes_
+    locations = encoders["Location"].classes_ if "Location" in encoders else []
+    transaction_types = encoders["TransactionType"].classes_ if "TransactionType" in encoders else []
     return render_template("input.html", locations=locations, transaction_types=transaction_types)
 
 
@@ -54,7 +57,6 @@ def predict():
         # === Encode categorical inputs safely ===
         if transaction_type not in encoders["TransactionType"].classes_:
             return render_template("error.html", error_message="Invalid Transaction Type.")
-
         if location not in encoders["Location"].classes_:
             return render_template("error.html", error_message="Invalid Location.")
 
