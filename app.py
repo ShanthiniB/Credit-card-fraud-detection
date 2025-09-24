@@ -1,11 +1,11 @@
 # app.py
 from flask import Flask, render_template, request
 import pickle
-import pandas as pd
+import numpy as np
 
 app = Flask(__name__)
 
-# === Load trained model and artifacts ===
+# === Load artifacts ===
 with open("model.pkl", "rb") as f:
     artifacts = pickle.load(f)
 
@@ -14,67 +14,80 @@ scaler = artifacts["scaler"]
 encoders = artifacts["encoders"]
 feature_columns = artifacts["feature_columns"]
 
-# === Load dataset to get all locations dynamically ===
-df = pd.read_csv("credit_card_fraud_dataset.csv")
-locations = sorted(df["Location"].unique())
+print(f"✅ Loaded best model: {artifacts['best_model_name']} (Accuracy: {artifacts['best_accuracy']:.4f})")
 
-# === ROUTES ===
 
 @app.route("/")
-def welcome():
+def home():
     return render_template("welcome.html")
+
 
 @app.route("/input")
 def input_page():
-    return render_template("input.html", locations=locations)
+    locations = encoders["Location"].classes_
+    transaction_types = encoders["TransactionType"].classes_
+    return render_template("input.html", locations=locations, transaction_types=transaction_types)
+
 
 @app.route("/predict", methods=["POST"])
 def predict():
-    # 1. Collect form data
-    form = request.form
-    input_data = {}
-
-    for col in feature_columns:
-        val = form.get(col, 0)  # default to 0 if not provided
-        input_data[col] = val
-
-    df_row = pd.DataFrame([input_data], columns=feature_columns)
-
-    # 2. Encode categorical columns
-    for col, le in encoders.items():
-        raw_val = str(df_row.loc[0, col])
-        if raw_val not in le.classes_:
-            return render_template(
-                "output.html",
-                error=f"Invalid value for {col}: '{raw_val}'. Allowed: {list(le.classes_)}"
-            )
-        df_row[col] = le.transform([raw_val])[0]
-
-    # 3. Convert numeric columns
-    for c in df_row.columns:
+    try:
+        # === Collect and validate form data ===
         try:
-            df_row[c] = pd.to_numeric(df_row[c])
-        except:
-            df_row[c] = 0
+            transaction_id = int(request.form["TransactionID"])
+        except ValueError:
+            return render_template("error.html", error_message="Transaction ID must be an integer.")
 
-    # 4. Scale features
-    X_scaled = scaler.transform(df_row.values)
+        try:
+            amount = float(request.form["Amount"])
+        except ValueError:
+            return render_template("error.html", error_message="Amount must be a number.")
 
-    # 5. Predict
-    pred = model.predict(X_scaled)[0]
-    label = "Fraud" if pred == 0 else "Not Fraud"
+        try:
+            merchant_id = int(request.form["MerchantID"])
+        except ValueError:
+            return render_template("error.html", error_message="Merchant ID must be an integer.")
 
-    # 6. Render output
-    return render_template(
-        "output.html",
-        prediction=int(pred),
-        label=label,
-        input_row=df_row.to_dict(orient="records")[0]
-    )
+        transaction_type = request.form["TransactionType"]
+        location = request.form["Location"]
 
-# === RUN APP ===
+        # === Encode categorical inputs safely ===
+        if transaction_type not in encoders["TransactionType"].classes_:
+            return render_template("error.html", error_message="Invalid Transaction Type.")
+
+        if location not in encoders["Location"].classes_:
+            return render_template("error.html", error_message="Invalid Location.")
+
+        transaction_type_encoded = encoders["TransactionType"].transform([transaction_type])[0]
+        location_encoded = encoders["Location"].transform([location])[0]
+
+        # === Build feature vector in correct order ===
+        input_dict = {
+            "TransactionID": transaction_id,
+            "Amount": amount,
+            "MerchantID": merchant_id,
+            "TransactionType": transaction_type_encoded,
+            "Location": location_encoded
+        }
+
+        input_array = np.array([input_dict[col] for col in feature_columns]).reshape(1, -1)
+
+        # === Scale numerical features ===
+        input_scaled = scaler.transform(input_array)
+
+        # === Predict ===
+        prediction = model.predict(input_scaled)[0]
+        probability = model.predict_proba(input_scaled)[0][1]  # probability of being fraud
+
+        # === Format result ===
+        result = "❌ Fraudulent Transaction" if prediction == 1 else "✅ Legitimate Transaction"
+        result += f" (Confidence: {probability:.2%})"
+
+        return render_template("output.html", prediction=result)
+
+    except Exception as e:
+        return render_template("error.html", error_message=f"Unexpected error: {str(e)}")
+
+
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
-
-
-
+    app.run(debug=True)
