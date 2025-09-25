@@ -316,7 +316,7 @@
             <div class="confidence-container">
                 <div class="confidence-label">Confidence Level</div>
                 <div class="confidence-bar">
-                    <div class="confidence-fill" style="width: {{ confidence.split(':')[1].strip().rstrip('%') }}%"></div>
+                    <div class="confidence-fill" id="confidenceFill"></div>
                 </div>
                 <div class="confidence-text">{{ confidence }}</div>
             </div>
@@ -376,13 +376,20 @@
         
         // Animate confidence bar
         window.addEventListener('load', function() {
-            const confidenceFill = document.querySelector('.confidence-fill');
+            const confidenceFill = document.getElementById('confidenceFill');
             if (confidenceFill) {
-                const targetWidth = confidenceFill.style.width;
-                confidenceFill.style.width = '0%';
-                setTimeout(() => {
-                    confidenceFill.style.width = targetWidth;
-                }, 500);
+                // Extract confidence percentage from the template
+                const confidenceText = document.querySelector('.confidence-text');
+                if (confidenceText) {
+                    const confidenceValue = confidenceText.textContent.match(/(\d+(?:\.\d+)?)%/);
+                    if (confidenceValue) {
+                        const percentage = confidenceValue[1] + '%';
+                        confidenceFill.style.width = '0%';
+                        setTimeout(() => {
+                            confidenceFill.style.width = percentage;
+                        }, 500);
+                    }
+                }
             }
         });
         
