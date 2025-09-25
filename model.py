@@ -123,7 +123,7 @@ def train_and_save():
     input_array = np.array(input_data).reshape(1, -1)
     input_scaled = scaler.transform(input_array)
     prediction = best_model.predict(input_scaled)[0]
-    print(f"🔹 Test input prediction: {'Fraud' if prediction == 1 else 'Legit'}")
+    print(f"🔹 Test input prediction: {'Fraud' if prediction == 0 else 'Legit'}")
 
 if __name__ == "__main__":
     train_and_save()
