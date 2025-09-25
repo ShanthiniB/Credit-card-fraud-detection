@@ -85,7 +85,7 @@ def predict():
         probability = model.predict_proba(input_scaled)[0][1]  # probability of fraud
 
         # === Format result ===
-        result = "❌ Fraudulent Transaction" if prediction == 1 else "✅ Legitimate Transaction"
+        result = "❌ Fraudulent Transaction" if prediction == 0 else "✅ Legitimate Transaction"
         result += f" (Confidence: {probability:.2%})"
 
         return render_template("output.html", prediction=result)
