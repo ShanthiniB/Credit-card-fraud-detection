@@ -14,10 +14,13 @@ scaler = artifacts.get("scaler")
 encoders = artifacts.get("encoders")
 feature_columns = artifacts.get("feature_columns")
 
-# Safely get model info for printing
 best_model_name = artifacts.get("best_model_name", "Unknown Model")
 best_accuracy = artifacts.get("best_accuracy", 0.0)
-print(f"✅ Loaded best model: {best_model_name} (Accuracy: {best_accuracy:.4f})")
+best_params = artifacts.get("best_params", {})
+
+print(f"✅ Loaded best model: {best_model_name}")
+print(f"📊 Accuracy: {best_accuracy:.4f}")
+print(f"⚙️ Best Hyperparameters: {best_params}")
 
 
 @app.route("/")
@@ -79,7 +82,7 @@ def predict():
 
         # === Predict ===
         prediction = model.predict(input_scaled)[0]
-        probability = model.predict_proba(input_scaled)[0][1]  # probability of being fraud
+        probability = model.predict_proba(input_scaled)[0][1]  # probability of fraud
 
         # === Format result ===
         result = "❌ Fraudulent Transaction" if prediction == 1 else "✅ Legitimate Transaction"
