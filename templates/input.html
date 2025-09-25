@@ -1,606 +1,73 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Fraud Detection Input</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <title>Fraud Detection - Input</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px 0;
-            position: relative;
-            overflow-x: hidden;
-        }
-
-        .background-animation {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            opacity: 0.1;
-        }
-
-        .floating-shapes {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-        }
-
-        .shape {
-            position: absolute;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
-            animation: float 25s infinite linear;
-        }
-
-        .shape:nth-child(1) {
-            width: 60px;
-            height: 60px;
-            left: 5%;
-            animation-delay: 0s;
-        }
-
-        .shape:nth-child(2) {
-            width: 90px;
-            height: 90px;
-            left: 85%;
-            animation-delay: 8s;
-        }
-
-        .shape:nth-child(3) {
-            width: 40px;
-            height: 40px;
-            left: 45%;
-            animation-delay: 15s;
-        }
-
-        @keyframes float {
-            0% {
-                transform: translateY(100vh) rotate(0deg);
-                opacity: 0;
-            }
-            10% {
-                opacity: 1;
-            }
-            90% {
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(-100px) rotate(360deg);
-                opacity: 0;
-            }
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-            animation: slideDown 1s ease-out;
-        }
-
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .header-icon {
-            font-size: 3rem;
-            color: white;
-            margin-bottom: 15px;
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.05);
-            }
-        }
-
-        .header h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: white;
-            margin-bottom: 10px;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .header p {
-            font-size: 1.1rem;
-            color: rgba(255, 255, 255, 0.9);
-            font-weight: 300;
-        }
-
-        .form-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 25px;
-            padding: 50px;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            animation: slideUp 1s ease-out 0.3s both;
-            position: relative;
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-bottom: 40px;
-        }
-
-        .form-group {
-            position: relative;
-            animation: fadeInUp 1s ease-out 0.6s both;
-        }
-
-        .form-group:nth-child(even) {
-            animation-delay: 0.8s;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .form-label {
-            display: block;
-            font-size: 1rem;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 8px;
-            position: relative;
-        }
-
-        .form-label i {
-            margin-right: 8px;
-            color: #667eea;
-            width: 16px;
-        }
-
-        .form-control, .form-select {
-            width: 100%;
-            padding: 15px 20px;
-            font-size: 1rem;
-            font-family: inherit;
-            border: 2px solid #e1e8ff;
-            border-radius: 12px;
-            background: #f8faff;
-            transition: all 0.3s ease;
-            outline: none;
-        }
-
-        .form-control:focus, .form-select:focus {
-            border-color: #667eea;
-            background: #fff;
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
-            transform: translateY(-2px);
-        }
-
-        .form-control:hover, .form-select:hover {
-            border-color: #8a9cff;
-            background: #fff;
-        }
-
-        .form-select {
-            cursor: pointer;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23667eea' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 15px center;
-            background-size: 20px;
-            padding-right: 50px;
-            appearance: none;
-        }
-
-        .input-icon {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #667eea;
-            pointer-events: none;
-            opacity: 0.7;
-            transition: opacity 0.3s ease;
-        }
-
-        .form-control:focus + .input-icon {
-            opacity: 1;
-        }
-
-        .button-container {
-            text-align: center;
-            margin-top: 40px;
-            animation: fadeInUp 1s ease-out 1s both;
-        }
-
-        .btn {
-            display: inline-flex;
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            display: flex;
+            justify-content: center;
             align-items: center;
-            gap: 10px;
-            padding: 18px 35px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            border-radius: 50px;
-            text-decoration: none;
-            transition: all 0.3s ease;
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            width: 400px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            font-weight: bold;
             border: none;
             cursor: pointer;
-            font-family: inherit;
-            position: relative;
-            overflow: hidden;
-            margin: 0 10px;
         }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
-            color: white;
-        }
-
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.9);
-            color: #667eea;
-            border: 2px solid #667eea;
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
-        }
-
-        .btn-secondary:hover {
-            background: #667eea;
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s ease;
-        }
-
-        .btn:hover::before {
-            left: 100%;
-        }
-
-        .progress-dots {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin: 30px 0;
-        }
-
-        .progress-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #e1e8ff;
-            transition: all 0.3s ease;
-        }
-
-        .progress-dot.active {
-            background: #667eea;
-            transform: scale(1.2);
-        }
-
-        .security-badge {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            background: linear-gradient(135deg, #f0f7ff 0%, #e8f4ff 100%);
-            padding: 12px 20px;
-            border-radius: 25px;
-            font-size: 0.9rem;
-            color: #667eea;
-            font-weight: 500;
-            margin: 30px auto 0;
-            width: fit-content;
-            border: 1px solid rgba(102, 126, 234, 0.1);
-        }
-
-        .form-tips {
-            background: linear-gradient(135deg, #fff9e6 0%, #fff4d6 100%);
-            border: 1px solid #f0d06b;
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 30px;
-            animation: fadeInUp 1s ease-out 0.4s both;
-        }
-
-        .tips-title {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 600;
-            color: #b8860b;
-            margin-bottom: 12px;
-        }
-
-        .tips-list {
-            color: #8b7355;
-            font-size: 0.95rem;
-            line-height: 1.6;
-            margin: 0;
-            padding-left: 20px;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 0 15px;
-            }
-            
-            .form-card {
-                padding: 30px 25px;
-            }
-            
-            .header h1 {
-                font-size: 2rem;
-            }
-            
-            .form-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-            
-            .btn {
-                width: 100%;
-                margin: 5px 0;
-            }
-        }
-
-        .sparkle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: #667eea;
-            border-radius: 50%;
-            animation: sparkle 4s ease-in-out infinite;
-        }
-
-        .sparkle:nth-child(1) {
-            top: 15%;
-            left: 8%;
-            animation-delay: 0s;
-        }
-
-        .sparkle:nth-child(2) {
-            top: 75%;
-            left: 92%;
-            animation-delay: 2s;
-        }
-
-        @keyframes sparkle {
-            0%, 100% {
-                opacity: 0;
-                transform: scale(0);
-            }
-            50% {
-                opacity: 1;
-                transform: scale(1);
-            }
+        button:hover {
+            background: #43a047;
         }
     </style>
 </head>
 <body>
-    <div class="background-animation">
-        <div class="floating-shapes">
-            <div class="shape"></div>
-            <div class="shape"></div>
-            <div class="shape"></div>
-        </div>
-    </div>
-
     <div class="container">
-        <div class="header">
-            <div class="header-icon">
-                <i class="fas fa-chart-line"></i>
-            </div>
-            <h1>Transaction Analysis</h1>
-            <p>Enter transaction details for AI-powered fraud detection</p>
-        </div>
+        <h2>Enter Transaction Details</h2>
+        <form action="/predict" method="post">
+            <label for="TransactionID">Transaction ID</label>
+            <input type="number" step="1" name="TransactionID" required>
 
-        <div class="form-card">
-            <div class="sparkle"></div>
-            <div class="sparkle"></div>
+            <label for="Amount">Amount</label>
+            <input type="number" step="0.01" name="Amount" required>
 
-            <div class="form-tips">
-                <div class="tips-title">
-                    <i class="fas fa-lightbulb"></i>
-                    Quick Tips
-                </div>
-                <ul class="tips-list">
-                    <li>Ensure all fields are filled accurately for best results</li>
-                    <li>Transaction ID should be unique for each transaction</li>
-                    <li>Amount should include decimal values (e.g., 123.45)</li>
-                </ul>
-            </div>
+            <label for="MerchantID">Merchant ID</label>
+            <input type="number" step="1" name="MerchantID" required>
 
-            <form action="/predict" method="post" id="fraudForm">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="TransactionID" class="form-label">
-                            <i class="fas fa-hashtag"></i>Transaction ID
-                        </label>
-                        <input type="text" class="form-control" id="TransactionID" name="TransactionID" required 
-                               placeholder="e.g., TXN123456789">
-                        <i class="fas fa-id-card input-icon"></i>
-                    </div>
+            <label for="TransactionType">Transaction Type</label>
+            <input type="number" step="1" name="TransactionType" placeholder="Encoded value" required>
 
-                    <div class="form-group">
-                        <label for="Amount" class="form-label">
-                            <i class="fas fa-dollar-sign"></i>Amount
-                        </label>
-                        <input type="number" step="0.01" class="form-control" id="Amount" name="Amount" required
-                               placeholder="e.g., 125.50" min="0">
-                        <i class="fas fa-money-bill-wave input-icon"></i>
-                    </div>
+            <label for="Location">Location</label>
+            <input type="number" step="1" name="Location" placeholder="Encoded value" required>
 
-                    <div class="form-group">
-                        <label for="MerchantID" class="form-label">
-                            <i class="fas fa-store"></i>Merchant ID
-                        </label>
-                        <input type="text" class="form-control" id="MerchantID" name="MerchantID" required
-                               placeholder="e.g., MERCHANT_001">
-                        <i class="fas fa-building input-icon"></i>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="TransactionType" class="form-label">
-                            <i class="fas fa-exchange-alt"></i>Transaction Type
-                        </label>
-                        <select class="form-select" id="TransactionType" name="TransactionType" required>
-                            <option value="">Select transaction type</option>
-                            <option value="purchase">Purchase</option>
-                            <option value="refund">Refund</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group" style="grid-column: 1 / -1;">
-                        <label for="Location" class="form-label">
-                            <i class="fas fa-map-marker-alt"></i>Location
-                        </label>
-                        <select class="form-select" id="Location" name="Location" required>
-                            <option value="">Select location</option>
-                            <!-- Sample locations - replace with your actual data -->
-                            <option value="New York">New York</option>
-                            <option value="Los Angeles">Los Angeles</option>
-                            <option value="Chicago">Chicago</option>
-                            <option value="Houston">Houston</option>
-                            <option value="Phoenix">Phoenix</option>
-                            <option value="Philadelphia">Philadelphia</option>
-                            <option value="San Antonio">San Antonio</option>
-                            <option value="San Diego">San Diego</option>
-                            <option value="Dallas">Dallas</option>
-                            <option value="San Jose">San Jose</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="progress-dots">
-                    <div class="progress-dot active"></div>
-                    <div class="progress-dot"></div>
-                    <div class="progress-dot"></div>
-                </div>
-
-                <div class="button-container">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-brain"></i>
-                        <span>Analyze Transaction</span>
-                    </button>
-                    
-                    <a href="/" class="btn btn-secondary">
-                        <i class="fas fa-arrow-left"></i>
-                        <span>Back to Home</span>
-                    </a>
-                </div>
-
-                <div class="security-badge">
-                    <i class="fas fa-shield-alt"></i>
-                    <span>Your data is processed securely with end-to-end encryption</span>
-                </div>
-            </form>
-        </div>
+            <button type="submit">Predict</button>
+        </form>
     </div>
-
-    <script>
-        // Form validation and enhancement
-        document.getElementById('fraudForm').addEventListener('submit', function(e) {
-            const progressDots = document.querySelectorAll('.progress-dot');
-            
-            // Animate progress dots
-            progressDots.forEach((dot, index) => {
-                setTimeout(() => {
-                    dot.classList.add('active');
-                }, index * 200);
-            });
-
-            // Add loading state to button
-            const submitBtn = this.querySelector('button[type="submit"]');
-            const originalText = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Processing...</span>';
-            submitBtn.disabled = true;
-
-            // Simulate processing time (remove this in production)
-            setTimeout(() => {
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
-            }, 3000);
-        });
-
-        // Enhanced form interactions
-        document.querySelectorAll('.form-control, .form-select').forEach(field => {
-            field.addEventListener('focus', function() {
-                this.parentElement.style.transform = 'translateY(-2px)';
-            });
-
-            field.addEventListener('blur', function() {
-                this.parentElement.style.transform = 'translateY(0)';
-            });
-        });
-
-        // Real-time form validation feedback
-        document.getElementById('Amount').addEventListener('input', function() {
-            const value = parseFloat(this.value);
-            if (value < 0) {
-                this.setCustomValidity('Amount cannot be negative');
-            } else if (value > 1000000) {
-                this.setCustomValidity('Amount seems unusually high');
-            } else {
-                this.setCustomValidity('');
-            }
-        });
-    </script>
 </body>
 </html>
