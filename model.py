@@ -26,7 +26,9 @@ def train_and_save():
 
     # 3. Features and target
     X = credit.drop(["TransactionDate", "IsFraud"], axis=1, errors="ignore")
-    y = credit["IsFraud"]
+
+    # Flip labels → 1 = Not Fraud, 0 = Fraud
+    y = 1 - credit["IsFraud"]
 
     feature_columns = list(X.columns)
     print("🔎 Feature columns:", feature_columns)
@@ -123,7 +125,7 @@ def train_and_save():
     input_array = np.array(input_data).reshape(1, -1)
     input_scaled = scaler.transform(input_array)
     prediction = best_model.predict(input_scaled)[0]
-    print(f"🔹 Test input prediction: {'Fraud' if prediction == 0 else 'Legit'}")
+    print(f"🔹 Test input prediction: {'✅ Not Fraud' if prediction == 1 else '❌ Fraud'}")
 
 if __name__ == "__main__":
     train_and_save()
