@@ -2,51 +2,439 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fraud Detection - Result</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
-            font-family: Arial, sans-serif;
-            background: #eef2f7;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
+            padding: 20px;
         }
-        .result-box {
+        
+        .result-container {
             background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
             text-align: center;
-            width: 400px;
+            max-width: 600px;
+            width: 90%;
+            animation: zoomIn 0.6s ease-out;
         }
+        
+        @keyframes zoomIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
         h2 {
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+            color: #2c3e50;
+            font-size: 2.2em;
+            font-weight: 700;
         }
-        .prediction {
-            font-size: 20px;
+        
+        .result-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 25px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .result-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+        }
+        
+        .prediction-icon {
+            font-size: 4em;
+            margin-bottom: 15px;
+            animation: bounce 1s ease-out;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+        
+        .prediction-text {
+            font-size: 24px;
             font-weight: bold;
-            margin: 15px 0;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
         }
-        a {
-            display: inline-block;
-            margin-top: 20px;
-            text-decoration: none;
-            background: #4CAF50;
+        
+        .prediction-text.fraud {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
             color: white;
-            padding: 10px 18px;
-            border-radius: 8px;
+            border: none;
         }
-        a:hover {
-            background: #43a047;
+        
+        .prediction-text.not-fraud {
+            background: linear-gradient(135deg, #51cf66, #40c057);
+            color: white;
+            border: none;
+        }
+        
+        .prediction-text.error {
+            background: linear-gradient(135deg, #ffd43b, #fab005);
+            color: #495057;
+            border: none;
+        }
+        
+        .confidence-container {
+            margin: 25px 0;
+            padding: 20px;
+            background: #e9ecef;
+            border-radius: 12px;
+        }
+        
+        .confidence-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .confidence-bar {
+            width: 100%;
+            height: 12px;
+            background: #dee2e6;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+        
+        .confidence-fill {
+            height: 100%;
+            border-radius: 6px;
+            transition: width 2s ease-out;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+        }
+        
+        .confidence-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .details-section {
+            margin: 30px 0;
+            text-align: left;
+        }
+        
+        .details-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-label {
+            font-weight: 500;
+            color: #666;
+        }
+        
+        .detail-value {
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            min-width: 140px;
+            justify-content: center;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            background: linear-gradient(45deg, #5a67d8, #6b46c1);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+        
+        .btn-outline:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .timestamp {
+            font-size: 12px;
+            color: #999;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .security-note {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin: 25px 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 14px;
+            color: #1565c0;
+        }
+        
+        @media (max-width: 600px) {
+            .result-container {
+                padding: 30px 20px;
+                margin: 10px;
+            }
+            
+            h2 {
+                font-size: 1.8em;
+            }
+            
+            .prediction-text {
+                font-size: 20px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 280px;
+            }
+            
+            .details-section {
+                text-align: center;
+            }
+            
+            .detail-item {
+                flex-direction: column;
+                text-align: center;
+                gap: 5px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="result-box">
-        <h2>Prediction Result</h2>
-        <p class="prediction">{{ prediction_text }}</p>
-        <a href="/input">Try Another Transaction</a>
+    <div class="result-container">
+        <h2>🎯 Analysis Complete</h2>
+        
+        <div class="result-card">
+            {% if 'Not Fraud' in prediction_text %}
+                <div class="prediction-icon">✅</div>
+                <div class="prediction-text not-fraud">{{ prediction_text }}</div>
+            {% elif 'Fraud' in prediction_text and 'Not Fraud' not in prediction_text %}
+                <div class="prediction-icon">⚠️</div>
+                <div class="prediction-text fraud">{{ prediction_text }}</div>
+            {% else %}
+                <div class="prediction-icon">❌</div>
+                <div class="prediction-text error">{{ prediction_text }}</div>
+            {% endif %}
+            
+            {% if confidence %}
+            <div class="confidence-container">
+                <div class="confidence-label">Confidence Level</div>
+                <div class="confidence-bar">
+                    <div class="confidence-fill" style="width: {{ confidence.split(':')[1].strip().rstrip('%') }}%"></div>
+                </div>
+                <div class="confidence-text">{{ confidence }}</div>
+            </div>
+            {% endif %}
+        </div>
+        
+        {% if 'Error' not in prediction_text %}
+        <div class="details-section">
+            <div class="details-title">🔍 Analysis Details</div>
+            <div class="detail-item">
+                <span class="detail-label">Analysis Method</span>
+                <span class="detail-value">Machine Learning</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Processing Time</span>
+                <span class="detail-value">< 1 second</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Security Level</span>
+                <span class="detail-value">High</span>
+            </div>
+        </div>
+        
+        {% if 'Fraud' in prediction_text and 'Not Fraud' not in prediction_text %}
+        <div class="security-note">
+            <strong>⚠️ Security Recommendation:</strong> This transaction shows characteristics similar to fraudulent activity. Consider additional verification steps before proceeding.
+        </div>
+        {% elif 'Not Fraud' in prediction_text %}
+        <div class="security-note">
+            <strong>✅ Security Status:</strong> This transaction appears to be legitimate based on our analysis. Continue with confidence.
+        </div>
+        {% endif %}
+        {% endif %}
+        
+        <div class="action-buttons">
+            <a href="/input" class="btn btn-primary">
+                🔄 Analyze Another
+            </a>
+            <a href="/" class="btn btn-secondary">
+                🏠 Back to Home
+            </a>
+            {% if 'Error' not in prediction_text %}
+            <a href="#" class="btn btn-outline" onclick="downloadReport()">
+                📊 Download Report
+            </a>
+            {% endif %}
+        </div>
+        
+        <div class="timestamp">
+            Analysis completed at <span id="timestamp"></span>
+        </div>
     </div>
+
+    <script>
+        // Set current timestamp
+        document.getElementById('timestamp').textContent = new Date().toLocaleString();
+        
+        // Animate confidence bar
+        window.addEventListener('load', function() {
+            const confidenceFill = document.querySelector('.confidence-fill');
+            if (confidenceFill) {
+                const targetWidth = confidenceFill.style.width;
+                confidenceFill.style.width = '0%';
+                setTimeout(() => {
+                    confidenceFill.style.width = targetWidth;
+                }, 500);
+            }
+        });
+        
+        // Download report functionality
+        function downloadReport() {
+            const predictionText = document.querySelector('.prediction-text').textContent;
+            const confidence = document.querySelector('.confidence-text')?.textContent || 'N/A';
+            const timestamp = document.getElementById('timestamp').textContent;
+            
+            const reportContent = `FRAUD DETECTION ANALYSIS REPORT
+=================================
+
+Analysis Result: ${predictionText}
+Confidence: ${confidence}
+Analysis Time: ${timestamp}
+Method: Machine Learning
+Security Level: High
+
+Generated by Credit Card Fraud Detection System
+==============================================`;
+            
+            const blob = new Blob([reportContent], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `fraud-analysis-${Date.now()}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+        
+        // Add some interactive effects
+        document.querySelectorAll('.btn').forEach(button => {
+            button.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-2px)';
+            });
+            
+            button.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+        
+        // Auto-refresh prevention message
+        let hasRefreshed = false;
+        window.addEventListener('beforeunload', function() {
+            if (!hasRefreshed) {
+                hasRefreshed = true;
+                // This will only show in some browsers
+                return 'Are you sure you want to leave? Your analysis results will be lost.';
+            }
+        });
+    </script>
 </body>
 </html>
