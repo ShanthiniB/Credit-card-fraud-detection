@@ -7,12 +7,11 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 WORKDIR /app
 
-# Install system dependencies safely
+# Install only necessary system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     gfortran \
     libatlas3-base \
-    libatlas-base-dev \
     liblapack-dev \
     curl \
     git \
@@ -38,5 +37,5 @@ USER app
 # Expose port
 EXPOSE 5000
 
-# Run the app
+# Start app with Gunicorn
 CMD ["sh", "-c", "exec gunicorn --bind 0.0.0.0:${PORT:-5000} --workers 1 --timeout 120 app:app"]
